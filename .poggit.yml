@@ -3,6 +3,6 @@ build-by-default: true
 branches:
 - main
 projects:
-  pmmp-HologramClient:
+  HologramClient:
     path: ""
 ...
