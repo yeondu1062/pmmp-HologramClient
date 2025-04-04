@@ -45,7 +45,7 @@ final class HologramClient extends PluginBase{
 				$entity->spawnToAll();
 			}
 		}
-
+	    
 	    	$this->saveResource("hologramClient.yml");
 	    
 		EntityFactory::getInstance()->register(HologramEntity::class,
@@ -59,10 +59,10 @@ final class HologramEntity extends Entity{
 	public string $text = '';
 	
 	public function __construct(Location $location) {
+		parent::__construct($location);
 		$this->setCanSaveWithChunk(true);
 		$this->setNoClientPredictions(true);
 		$this->setNameTagAlwaysVisible(true);
-		parent::__construct($location);
 	}
 
 	public static function getNetworkTypeId(): string {
