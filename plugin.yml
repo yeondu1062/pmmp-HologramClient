@@ -1,0 +1,9 @@
+---
+name: HologramClient
+main: HologramClient\HologramClient
+src-namespace-prefix: HologramClient
+version: 0.1.0
+api: 5.0.0
+author: yeondu1062
+description: Floating text sent individually to each client.
+...
