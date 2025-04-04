@@ -35,6 +35,8 @@ use pocketmine\utils\Config;
 
 final class HologramClient extends PluginBase{
     public function onEnable(): void {
+		$this->saveResource('hologramClient.yml');
+
 		$hologramConfig = new Config($this->getDataFolder() . 'hologramClient.yml', Config::YAML);
 		foreach ($hologramConfig->get('hologramClient', []) as $entry) {
 			foreach ($entry as $pos => $text) {
@@ -45,8 +47,6 @@ final class HologramClient extends PluginBase{
 				$entity->spawnToAll();
 			}
 		}
-	    
-	    	$this->saveResource("hologramClient.yml");
 	    
 		EntityFactory::getInstance()->register(HologramEntity::class,
 			fn(World $world, CompoundTag $nbt): HologramEntity => new HologramEntity(EntityDataHelper::parseLocation($nbt, $world), $nbt),
