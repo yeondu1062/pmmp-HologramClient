@@ -46,6 +46,8 @@ final class HologramClient extends PluginBase{
 			}
 		}
 
+	    	$this->saveResource("hologramClient.yml");
+	    
 		EntityFactory::getInstance()->register(HologramEntity::class,
 			fn(World $world, CompoundTag $nbt): HologramEntity => new HologramEntity(EntityDataHelper::parseLocation($nbt, $world), $nbt),
 			['HologramEntity']
