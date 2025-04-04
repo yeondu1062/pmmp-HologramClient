@@ -1,0 +1,8 @@
+--- # Poggit-CI Manifest. Open the CI at https://poggit.pmmp.io/ci/yeondu1062/pmmp-HologramClient
+build-by-default: true
+branches:
+- main
+projects:
+  pmmp-HologramClient:
+    path: ""
+...
