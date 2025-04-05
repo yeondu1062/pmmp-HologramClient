@@ -43,7 +43,7 @@ final class HologramClient extends PluginBase{
 				[$x, $y, $z] = array_map('intval', explode('.', $pos));
 				$loc = new Location($x, $y, $z, Server::getInstance()->getWorldManager()->getDefaultWorld(), 0, 0);			
 				$entity = new HologramEntity($loc);
-				$entity->text = $text;
+				$entity->setNameTag($text);
 				$entity->spawnToAll();
 			}
 		}
@@ -56,8 +56,6 @@ final class HologramClient extends PluginBase{
 }
 
 final class HologramEntity extends Entity{
-	public string $text = '';
-	
 	public function __construct(Location $location) {
 		parent::__construct($location);
 		$this->setCanSaveWithChunk(true);
@@ -83,7 +81,7 @@ final class HologramEntity extends Entity{
 		$packet = new SetActorDataPacket();
 		$packet->actorRuntimeId = $this->getId();
 		$packet->syncedProperties = new PropertySyncData([], []);
-		$packet->metadata = [EntityMetadataProperties::NAMETAG => new StringMetadataProperty(str_replace('{name}', $player->getName(), $this->text))];
+		$packet->metadata = [EntityMetadataProperties::NAMETAG => new StringMetadataProperty(str_replace('{name}', $player->getName(), $this->getNameTag()))];
 		$player->getNetworkSession()->sendDataPacket($packet);
 	}
 
