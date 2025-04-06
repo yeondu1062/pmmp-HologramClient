@@ -23,12 +23,9 @@ use pocketmine\entity\EntityDataHelper;
 use pocketmine\entity\EntityFactory;
 use pocketmine\network\mcpe\protocol\types\entity\EntityIds;
 use pocketmine\network\mcpe\protocol\types\entity\EntityMetadataCollection;
-use pocketmine\network\mcpe\protocol\types\entity\EntityMetadataProperties;
 use pocketmine\network\mcpe\protocol\types\entity\StringMetadataProperty;
 use pocketmine\network\mcpe\protocol\types\entity\PropertySyncData;
 use pocketmine\network\mcpe\protocol\SetActorDataPacket;
-use pocketmine\network\mcpe\convert\TypeConverter;
-use pocketmine\block\VanillaBlocks;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\utils\Config;
@@ -38,27 +35,22 @@ final class HologramClient extends PluginBase{
 		$this->saveResource('hologramClient.yml');
 
 		$hologramConfig = new Config($this->getDataFolder() . 'hologramClient.yml', Config::YAML);
+		$world = Server::getInstance()->getWorldManager()->getDefaultWorld();
+
 		foreach ($hologramConfig->get('hologramClient', []) as $entry) {
 			foreach ($entry as $pos => $text) {
 				[$x, $y, $z] = array_map('intval', explode('.', $pos));
-				$loc = new Location($x, $y, $z, Server::getInstance()->getWorldManager()->getDefaultWorld(), 0, 0);			
-				$entity = new HologramEntity($loc);
-				$entity->setNameTag($text);
-				$entity->spawnToAll();
+				(new HologramEntity(new Location($x, $y, $z, $world, 0, 0), $text))->spawnToAll();
 			}
 		}
-	    
-		EntityFactory::getInstance()->register(HologramEntity::class,
-			fn (World $world, CompoundTag $nbt): HologramEntity => new HologramEntity(EntityDataHelper::parseLocation($nbt, $world), $nbt),
-			['HologramEntity']
-		);
     }
 }
 
 final class HologramEntity extends Entity{
-	public function __construct(Location $location) {
+	public function __construct(Location $location, string $text) {
 		parent::__construct($location);
-		$this->setCanSaveWithChunk(true);
+		$this->setNameTag($text);
+		$this->setCanSaveWithChunk(false);
 		$this->setNoClientPredictions(true);
 		$this->setNameTagAlwaysVisible(true);
 	}
@@ -73,7 +65,7 @@ final class HologramEntity extends Entity{
 
 	protected function syncNetworkData(EntityMetadataCollection $properties): void {
 		parent::syncNetworkData($properties);
-		$properties->setInt(EntityMetadataProperties::VARIANT, TypeConverter::getInstance()->getBlockTranslator()->internalIdToNetworkId(VanillaBlocks::AIR()->getStateId()));
+		$properties->setInt(2, 12032); //VARIANT(2) AIR(12032)
 	}
 
 	public function spawnTo(Player $player): void {
@@ -81,7 +73,8 @@ final class HologramEntity extends Entity{
 		$packet = new SetActorDataPacket();
 		$packet->actorRuntimeId = $this->getId();
 		$packet->syncedProperties = new PropertySyncData([], []);
-		$packet->metadata = [EntityMetadataProperties::NAMETAG => new StringMetadataProperty(str_replace('{name}', $player->getName(), $this->getNameTag()))];
+		$packet->metadata = [4 => new StringMetadataProperty(str_replace( //NAMETAG(4)
+			['{name}', '{name_tag}'], [$player->getName(), $player->getNameTag()], $this->getNameTag()))];
 		$player->getNetworkSession()->sendDataPacket($packet);
 	}
 
