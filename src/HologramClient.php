@@ -65,7 +65,7 @@ final class HologramEntity extends Entity{
 
 	protected function syncNetworkData(EntityMetadataCollection $properties): void {
 		parent::syncNetworkData($properties);
-		$properties->setInt(2, 12032); //VARIANT(2) AIR(12032)
+		$properties->setInt(EntityMetadataProperties::VARIANT, 12032); //AIR (12032)
 	}
 
 	public function spawnTo(Player $player): void {
@@ -73,7 +73,7 @@ final class HologramEntity extends Entity{
 		$packet = new SetActorDataPacket();
 		$packet->actorRuntimeId = $this->getId();
 		$packet->syncedProperties = new PropertySyncData([], []);
-		$packet->metadata = [4 => new StringMetadataProperty(str_replace( //NAMETAG(4)
+		$packet->metadata = [EntityMetadataProperties::NAMETAG => new StringMetadataProperty(str_replace(
 			['{name}', '{name_tag}'], [$player->getName(), $player->getNameTag()], $this->getNameTag()))];
 		$player->getNetworkSession()->sendDataPacket($packet);
 	}
