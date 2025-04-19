@@ -13,21 +13,16 @@ declare(strict_types = 1);
 namespace HologramClient;
 
 use pocketmine\plugin\PluginBase;
-use pocketmine\world\World;
 use pocketmine\Server;
 use pocketmine\player\Player;
 use pocketmine\entity\Entity;
 use pocketmine\entity\EntitySizeInfo;
 use pocketmine\entity\Location;
-use pocketmine\entity\EntityDataHelper;
-use pocketmine\entity\EntityFactory;
 use pocketmine\network\mcpe\protocol\types\entity\EntityIds;
-use pocketmine\network\mcpe\protocol\types\entity\EntityMetadataCollection;
 use pocketmine\network\mcpe\protocol\types\entity\EntityMetadataProperties;
 use pocketmine\network\mcpe\protocol\types\entity\StringMetadataProperty;
 use pocketmine\network\mcpe\protocol\types\entity\PropertySyncData;
 use pocketmine\network\mcpe\protocol\SetActorDataPacket;
-use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\utils\Config;
 
@@ -54,6 +49,7 @@ final class HologramEntity extends Entity{
 		$this->setCanSaveWithChunk(false);
 		$this->setNoClientPredictions(true);
 		$this->setNameTagAlwaysVisible(true);
+		$this->getNetworkProperties()->setInt(EntityMetadataProperties::VARIANT, 12032); //AIR (12032)
 	}
 
 	public static function getNetworkTypeId(): string {
@@ -62,11 +58,6 @@ final class HologramEntity extends Entity{
 
 	protected function getInitialSizeInfo(): EntitySizeInfo {
 		return new EntitySizeInfo(1, 1);
-	}
-
-	protected function syncNetworkData(EntityMetadataCollection $properties): void {
-		parent::syncNetworkData($properties);
-		$properties->setInt(EntityMetadataProperties::VARIANT, 12032); //AIR (12032)
 	}
 
 	public function spawnTo(Player $player): void {
