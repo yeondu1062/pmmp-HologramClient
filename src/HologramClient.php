@@ -26,8 +26,8 @@ use pocketmine\network\mcpe\protocol\SetActorDataPacket;
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\utils\Config;
 
-final class HologramClient extends PluginBase{
-    public function onEnable(): void {
+final class HologramClient extends PluginBase {
+	public function onEnable(): void {
 		$this->saveResource('hologramClient.yml');
 
 		$hologramConfig = new Config($this->getDataFolder() . 'hologramClient.yml', Config::YAML);
@@ -42,7 +42,7 @@ final class HologramClient extends PluginBase{
     }
 }
 
-final class HologramEntity extends Entity{
+final class HologramEntity extends Entity {
 	public function __construct(Location $location, string $text) {
 		parent::__construct($location);
 		$this->setNameTag($text);
